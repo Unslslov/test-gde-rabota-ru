@@ -67,7 +67,6 @@ class GeocodingService
         $extendedDetails = $this->getExtendedDetails($metaData);
         $coordinates = $this->getCoordinates($geoObject);
 
-        // Используем двухэтапный поиск района
         $district = $this->findDistrict($addressComponents, $extendedDetails);
         if ($district === 'Не указан' && !empty($coordinates['longitude']) && !empty($coordinates['latitude'])) {
             $district = $this->findDistrictByCoordinates(
@@ -76,7 +75,6 @@ class GeocodingService
             );
         }
 
-        // Используем двухэтапный поиск метро
         $metro = $this->findMetroStations($metaData);
         if ($metro === 'Не указано' && !empty($coordinates['longitude']) && !empty($coordinates['latitude'])) {
             $metro = $this->findMetroByCoordinates(
@@ -85,7 +83,6 @@ class GeocodingService
             );
         }
 
-        // Используем двухэтапный поиск улицы
         $street = $this->findStreet($addressComponents, $extendedDetails);
         if ($street === 'Не указана' && !empty($coordinates['longitude']) && !empty($coordinates['latitude'])) {
             $street = $this->findStreetByCoordinates(
@@ -184,7 +181,7 @@ class GeocodingService
             $response = Http::get($this->baseUrl, [
                 'apikey' => $this->apiKey,
                 'geocode' => "$longitude,$latitude",
-                'kind' => 'street', // Ищем улицы
+                'kind' => 'street',
                 'format' => 'json',
                 'results' => 1,
                 'lang' => 'ru_RU'
@@ -197,9 +194,7 @@ class GeocodingService
                     $geoObject = $data['response']['GeoObjectCollection']['featureMember'][0]['GeoObject'];
                     $streetName = $geoObject['name'] ?? '';
 
-                    // Очищаем название от ненужных дополнений
                     if (!empty($streetName)) {
-                        // Убираем "улица" из названия если есть
                         $streetName = str_replace(['улица ', 'ул. '], '', $streetName);
                         return $streetName;
                     }
@@ -258,7 +253,7 @@ class GeocodingService
             $this->findComponent($components, 'route'),
             $extendedDetails['street'] ?? '',
             $this->findComponent($components, 'thoroughfare'),
-            $this->extractStreetFromAddress($components) // Новый метод для извлечения из полного адреса
+            $this->extractStreetFromAddress($components)
         ];
 
         foreach ($streetSources as $street) {
@@ -272,14 +267,12 @@ class GeocodingService
 
     private function extractStreetFromAddress(array $components): string
     {
-        // Пытаемся извлечь улицу из полного адреса
         foreach ($components as $component) {
             if (in_array($component['kind'], ['street', 'route', 'thoroughfare'])) {
                 return $component['name'];
             }
         }
 
-        // Если не нашли в компонентах, ищем в других полях
         return '';
     }
 
@@ -289,7 +282,7 @@ class GeocodingService
             $this->findComponent($components, 'house'),
             $extendedDetails['house'] ?? '',
             $this->findComponent($components, 'premise'),
-            $this->extractHouseFromAddress($components) // Новый метод для дома
+            $this->extractHouseFromAddress($components)
         ];
 
         foreach ($houseSources as $house) {

@@ -52,6 +52,8 @@ WORKDIR /var/www
 # Копируем код приложения
 COPY . .
 
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-progress
+
 # Устанавливаем правильные права
 RUN chown -R www-data:www-data /var/www/storage
 RUN chown -R www-data:www-data /var/www/bootstrap/cache

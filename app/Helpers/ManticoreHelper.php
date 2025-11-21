@@ -71,4 +71,12 @@ class ManticoreHelper
 
         return self::query($sql, [$query]);
     }
+
+    public static function statement($sql, $bindings = [])
+    {
+        $pdo = self::getConnection();
+
+        $stmt = $pdo->prepare($sql);
+        return $stmt->execute($bindings);
+    }
 }
