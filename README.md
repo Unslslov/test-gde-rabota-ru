@@ -1,8 +1,8 @@
 ## 🚀 Установка
 ### Клонируйте репозиторий:
 ```bash
-git clone https://github.com/Unslslov/StorageTask.git 
-cd storagetask
+git clone https://github.com/Unslslov/test-gde-rabota-ru.git
+cd test-gde-rabota-ru
 ```
 ### Настройте .env файл:
 ```bash
