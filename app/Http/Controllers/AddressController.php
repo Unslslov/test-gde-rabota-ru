@@ -26,12 +26,10 @@ class AddressController extends Controller
         $results = [];
 
         if ($address) {
-            // Сохраняем уникальный запрос
             if (!UserQuery::where('query', $address)->exists()) {
                 UserQuery::create(['query' => $address]);
             }
 
-            // Получаем результаты геокодирования
             $results = $this->geocodingService->geocodeAddress($address);
         }
 

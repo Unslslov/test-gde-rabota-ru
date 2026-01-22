@@ -37,11 +37,13 @@ class SearchController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('q', '');
+        dd($query);
         $results = [];
 
         if ($query) {
             try {
                 $results = ManticoreHelper::search('vacancy', $query, 10);
+                dd($results);
             } catch (\Exception $e) {
                 return response()->json(['error' => $e->getMessage()], 500);
             }
